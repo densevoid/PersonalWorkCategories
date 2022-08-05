@@ -42,10 +42,14 @@
 	<personalWorkCategories_hidden>hidden</personalWorkCategories_hidden>
 	
 	<personalWorkCategories_enableAdvancedMode>Enable advanced mode</personalWorkCategories_enableAdvancedMode>
+	<personalWorkCategories_advancedModeEnabled>Advanced mode enabled</personalWorkCategories_advancedModeEnabled>
 	<personalWorkCategories_beCarefulWithAdvancedMode>Advanced mode allows you to move elements absolutely freely and create custom groups. But in this mode, your actions can lead to a breakdown of the game balance. This can unlock the pawn's blocked jobs or vice versa.</personalWorkCategories_beCarefulWithAdvancedMode>	
+	<personalWorkCategories_splitBuildingWorks>Split building works (not finished)</personalWorkCategories_splitBuildingWorks>
+	<personalWorkCategories_splitBuildingWorksTooltip>Divides the construction work into two types for buildings with quality and to building without quality, such as walls and floor.</personalWorkCategories_splitBuildingWorksTooltip>
 	
 	<personalWorkCategories_skills>Skills</personalWorkCategories_skills>
 
+	<personalWorkCategories_default>Default</personalWorkCategories_default>  
 	<personalWorkCategories_defaultGroupLabel>work</personalWorkCategories_defaultGroupLabel>
 	<personalWorkCategories_defaultPawnLabel>Worker</personalWorkCategories_defaultPawnLabel>
 	<personalWorkCategories_defaultGerungLabel>working</personalWorkCategories_defaultGerungLabel>
