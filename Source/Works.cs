@@ -69,16 +69,20 @@ namespace HandyUI_PersonalWorkCategories
         public void InsertWorkGiverByPriority(WorkGiver workGiver)
         {
             int insertedPriority = DefDatabase<WorkGiverDef>.GetNamed(workGiver.defName).priorityInType;
-
             int insertIndex = -1;
+
+            int i = 0;
             foreach (WorkGiver compareWorkGiver in workGivers)
             {
-                int comparePriority = DefDatabase<WorkGiverDef>.GetNamed(compareWorkGiver.defName).priorityInType;
+                int comparePriority = (workGivers.Count - i) * 10;
+
                 if (insertedPriority > comparePriority)
                 {
                     insertIndex = workGivers.IndexOf(compareWorkGiver);
                     break;
                 }
+
+                i++;
             }
 
             if (insertIndex >= 0)
@@ -120,6 +124,11 @@ namespace HandyUI_PersonalWorkCategories
         public override object Clone()
         {
             return new WorkType(this);
+        }
+
+        public override string ToString()
+        {
+            return defName + " (" + workGivers.ToStringSafeEnumerable() + ")";
         }
 
         public class ExtraData : IExposable
@@ -206,6 +215,11 @@ namespace HandyUI_PersonalWorkCategories
         public override object Clone()
         {
             return new WorkGiver(this);
+        }
+
+        public override string ToString()
+        {
+            return defName;
         }
     }
 }

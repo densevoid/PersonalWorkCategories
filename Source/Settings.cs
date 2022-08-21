@@ -180,10 +180,10 @@ namespace HandyUI_PersonalWorkCategories
                 if (Widgets.ButtonText(deleteButRect, "personalWorkCategories_deletePreset".Translate(), true, true, !isDefaultPreset))
                 {
                     int index = PM.DeletePreset(selectedPreset);
-                    if (index >= 0)
+                    if (index > 0)
                         SwitchPresetTo(PM.presets[index - 1]);
                     else
-                        SwitchPresetTo(PM.presets[PM.presets.IndexOf(PM.DEFAULT_PRESET)]);
+                        SwitchPresetTo(PM.DEFAULT_PRESET);
                 }
             }
             /*
@@ -417,7 +417,7 @@ namespace HandyUI_PersonalWorkCategories
                     Vector2 center = rect.center;
                     if (Widgets.ButtonText(new Rect()
                     {
-                        x = center.x - standartButtonWidth / 2,
+                        x = center.x - standartButtonWidth,
                         y = center.y - standartButtonHeight / 2 + 50f,
                         width = standartButtonWidth * 2f,
                         height = standartButtonHeight
@@ -676,10 +676,18 @@ namespace HandyUI_PersonalWorkCategories
                 newHash = PM.DEFAULT_PRESET.hash;
             }
             else newHash = PM.ComputePresetHash(defaultWorkTypes, defaultWorkGivers);
-            defaultWorkTypes.Sort((a, b) => a.naturalPriority >= b.naturalPriority ? -1 : 1);            
+
+            defaultWorkTypes.Sort((a, b) => a.naturalPriority >= b.naturalPriority ? -1 : 1);
+            defaultWorkGivers.Sort((a, b) => a.priorityInType >= b.priorityInType ? -1 : 1);
 
             bool selectedPresetDeprecate = false;
             bool defaultPresetDeprecate = false;
+
+            if (PM.DEFAULT_PRESET.hash != newHash)
+            {
+                defaultPresetDeprecate = true;
+                PM.UpdateDefaultPreset(defaultWorkTypes, defaultWorkGivers);
+            }
 
             if (selectedPreset != PM.DEFAULT_PRESET)
             {
@@ -688,11 +696,6 @@ namespace HandyUI_PersonalWorkCategories
                     SwitchPresetTo(PM.DEFAULT_PRESET);
                     selectedPresetDeprecate = true;
                 }
-            }
-
-            if (PM.DEFAULT_PRESET.hash != newHash)
-            {
-                defaultPresetDeprecate = true;
             }
 
             if (defaultPresetDeprecate)
@@ -759,32 +762,48 @@ namespace HandyUI_PersonalWorkCategories
                     }
                 }
 
-                // check givers of current type for deprecated
-                foreach (WorkGiver workGiver in workType.workGivers.ListFullCopy())
-                {
-                    WorkType defaultTypeOfGiver = PM.GetDefaultTypeOfGiver(workGiver);
-
-                    // if WorkGiver must be rescued from destroing WorkType
-                    if (isWTDeprecate && defaultTypeOfGiver != null)
-                    {
-                        workType.workGivers.Remove(workGiver);
-                        newPreset.FindWorkTypeByDefName(defaultTypeOfGiver.defName).InsertWorkGiverByPriority(workGiver);
-
-                    }
-                    // if WorkGiver deprecated then remove it
-                    else if (!isWTDeprecate && defaultTypeOfGiver == null) workType.workGivers.Remove(workGiver);
-                }
-
-
                 if (isWTDeprecate) newPreset.workTypes.Remove(workType);
+                else
+                {
+                    // check givers of current type for deprecated
+                    foreach (WorkGiver workGiver in workType.workGivers.ListFullCopy())
+                    {
+                        WorkType defaultTypeOfGiver = PM.GetDefaultTypeOfGiver(workGiver);
+
+                        // if WorkGiver deprecated then remove it
+                        if (!isWTDeprecate && defaultTypeOfGiver == null) workType.workGivers.Remove(workGiver);
+                    }
+                }
             }
 
             //Add new works
-            foreach (WorkType mayBeNewWorkType in PM.DEFAULT_PRESET.workTypes)
+            foreach (WorkType defaultWorkType in PM.DEFAULT_PRESET.workTypes)
             {
-                if (newPreset.FindWorkTypeByDefName(mayBeNewWorkType.defName) == null) continue;
+                WorkType newPresetWorkType = newPreset.FindWorkTypeByDefName(defaultWorkType.defName);
 
-                newPreset.InsertWorkTypeByPriority(mayBeNewWorkType);
+                if (newPresetWorkType != null)
+                {
+                    foreach (WorkGiver defaultWorkGiver in defaultWorkType.workGivers)
+                    {
+                        WorkGiver detectedWorkType = null;
+
+                        foreach (WorkType checkedWorkType in newPreset.workTypes)
+                        {
+                            detectedWorkType = checkedWorkType.workGivers.Find(wg => wg.defName == defaultWorkGiver.defName);
+
+                            if (detectedWorkType != null) break;
+                        }
+
+                        if (detectedWorkType != null) continue;
+
+                        WorkType workTypeForInserting = newPreset.FindWorkTypeByDefName(defaultWorkType.defName);
+                        workTypeForInserting.InsertWorkGiverByPriority(defaultWorkGiver);
+                    }
+                }
+                else
+                {
+                    newPreset.InsertWorkTypeByPriority(defaultWorkType);
+                }
             }
         }
 
@@ -796,14 +815,12 @@ namespace HandyUI_PersonalWorkCategories
 
             float yPos = selectedPreset.workTypes.IndexOf(selectedWorkType) * (elementHeight + elementGap);
 
-            Log.Message(yPos + ", " + workTypesScrollPosition.y + ", " + elementsColumnHeight);
             if (yPos < workTypesScrollPosition.y)
             {
                 workTypesScrollPosition.y = yPos;
             }
             else if (yPos + elementHeight + elementGap > workTypesScrollPosition.y + elementsColumnHeight)
             {
-                Log.Message(yPos + ", " + workTypesScrollPosition.y + elementsColumnHeight);
                 workTypesScrollPosition.y = yPos - elementsColumnHeight + elementHeight + elementGap;
             }
         }

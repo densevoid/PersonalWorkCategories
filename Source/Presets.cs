@@ -27,6 +27,11 @@ namespace HandyUI_PersonalWorkCategories
 
         public PresetManager(List<WorkTypeDef> defaultWorkTypes, List<WorkGiverDef> defaultWorkGivers)
         {
+            UpdateDefaultPreset(defaultWorkTypes, defaultWorkGivers);
+        }
+
+        public void UpdateDefaultPreset(List<WorkTypeDef> defaultWorkTypes, List<WorkGiverDef> defaultWorkGivers)
+        {
             DEFAULT_PRESET = new Preset();
             DEFAULT_PRESET.name = "personalWorkCategories_default".Translate();
             DEFAULT_PRESET.workTypes = defaultWorkTypes.ConvertAll(wtDef => new WorkType(wtDef.defName));
