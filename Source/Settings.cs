@@ -666,6 +666,9 @@ namespace HandyUI_PersonalWorkCategories
 
         internal bool InitModSettings(List<WorkTypeDef> defaultWorkTypes, List<WorkGiverDef> defaultWorkGivers)
         {
+            defaultWorkTypes.Sort((a, b) => a.naturalPriority >= b.naturalPriority ? -1 : 1);
+            defaultWorkGivers.Sort((a, b) => a.priorityInType >= b.priorityInType ? -1 : 1);
+
             string newHash;
 
             if (PM == null)
@@ -675,10 +678,10 @@ namespace HandyUI_PersonalWorkCategories
 
                 newHash = PM.DEFAULT_PRESET.hash;
             }
-            else newHash = PM.ComputePresetHash(defaultWorkTypes, defaultWorkGivers);
-
-            defaultWorkTypes.Sort((a, b) => a.naturalPriority >= b.naturalPriority ? -1 : 1);
-            defaultWorkGivers.Sort((a, b) => a.priorityInType >= b.priorityInType ? -1 : 1);
+            else
+            {
+                newHash = PM.ComputePresetHash(defaultWorkTypes, defaultWorkGivers);
+            }
 
             bool selectedPresetDeprecate = false;
             bool defaultPresetDeprecate = false;
