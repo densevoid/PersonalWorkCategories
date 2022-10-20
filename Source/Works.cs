@@ -69,26 +69,36 @@ namespace HandyUI_PersonalWorkCategories
         public void InsertWorkGiverByPriority(WorkGiver workGiver)
         {
             int insertedPriority = DefDatabase<WorkGiverDef>.GetNamed(workGiver.defName).priorityInType;
-            int insertIndex = -1;
+            bool isInserted = false;
 
-            int i = 0;
-            foreach (WorkGiver compareWorkGiver in workGivers)
+            for (int i = workGivers.Count - 1; i >= 0; i--)
             {
-                int comparePriority = (workGivers.Count - i) * 10;
-
-                if (insertedPriority > comparePriority)
+                WorkGiverDef workGiverDef = DefDatabase<WorkGiverDef>.GetNamed(workGivers[i].defName);
+                if (workGiverDef == null)
                 {
-                    insertIndex = workGivers.IndexOf(compareWorkGiver);
+                    Log.Message("Can'find WorkGiverDef: " + workGivers[i].defName);
+                    continue;
+                }
+
+                if (workGiverDef.priorityInType >= insertedPriority)
+                {
+                    workGivers.Insert(i + 1, workGiver);
+                    isInserted = true;
                     break;
                 }
 
-                i++;
+                if (i == 0)
+                {
+                    workGivers.Insert(0, workGiver);
+                    isInserted = true;
+                    break;
+                }
             }
 
-            if (insertIndex >= 0)
-                workGivers.Insert(insertIndex, workGiver);
-            else
+            if (!isInserted)
+            {
                 workGivers.Add(workGiver);
+            }
         }
 
         public override string GetLabel()

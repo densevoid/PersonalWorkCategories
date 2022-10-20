@@ -109,14 +109,7 @@ namespace HandyUI_PersonalWorkCategories.Patch
             {
                 int i = 0;
 
-                List<WorkGiver> workGivers = workType.workGivers.ListFullCopy();
-                workGivers.Sort((a, b) => {
-                    WorkGiverDef aDef = DefDatabase<WorkGiverDef>.GetNamed(a.defName);
-                    WorkGiverDef bDef = DefDatabase<WorkGiverDef>.GetNamed(b.defName);
-                    return aDef.priorityInType >= bDef.priorityInType ? -1 : 1;
-                });
-
-                foreach (WorkGiver workGiver in workGivers)
+                foreach (WorkGiver workGiver in workType.workGivers)
                 {
                     WorkGiverDef workGiverDef = DefDatabase<WorkGiverDef>.GetNamed(workGiver.defName);
                     if (workGiverDef == null)

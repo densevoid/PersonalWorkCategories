@@ -214,7 +214,7 @@ namespace HandyUI_PersonalWorkCategories
             if (!workTypes.Contains(targetWorkType) || !workTypes.Contains(positionWorkType)) return false;
 
             workTypes.Remove(targetWorkType);
-            int index = workTypes.IndexOf(positionWorkType) + 1;
+            int index = workTypes.IndexOf(positionWorkType) ;
             workTypes.Insert(index, targetWorkType);
 
             return true;
@@ -258,22 +258,37 @@ namespace HandyUI_PersonalWorkCategories
         public void InsertWorkTypeByPriority(WorkType workType)
         {
             int insertedPriority = DefDatabase<WorkTypeDef>.GetNamed(workType.defName).naturalPriority;
+            bool isInserted = false;
 
-            int insertIndex = -1;
-            foreach (WorkType compareWorkType in workTypes)
+            for (int i = workTypes.Count - 1; i >= 0; i--)
             {
-                int comparePriority = DefDatabase<WorkTypeDef>.GetNamed(compareWorkType.defName).naturalPriority;
-                if (insertedPriority > comparePriority)
+                if (workTypes[i].IsExtra()) continue;
+
+                WorkTypeDef workTypeDef = DefDatabase<WorkTypeDef>.GetNamed(workTypes[i].defName);
+                if (workTypeDef == null)
                 {
-                    insertIndex = workTypes.IndexOf(compareWorkType);
+                    continue;
+                }
+
+                if (workTypeDef.naturalPriority >= insertedPriority)
+                {
+                    workTypes.Insert(i + 1, workType);
+                    isInserted = true;
+                    break;
+                }
+
+                if (i == 0)
+                {
+                    workTypes.Insert(0, workType);
+                    isInserted = true;
                     break;
                 }
             }
 
-            if (insertIndex >= 0)
-                workTypes.Insert(insertIndex, workType);
-            else
+            if (!isInserted)
+            {
                 workTypes.Add(workType);
+            }
         }
 
         public object Clone()

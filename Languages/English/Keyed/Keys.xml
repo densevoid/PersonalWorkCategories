@@ -25,7 +25,7 @@
 	<personalWorkCategories_root>Root</personalWorkCategories_root>
 
 	<personalWorkCategories_warningHeader>From mod: Personal Work Categories</personalWorkCategories_warningHeader>
-	<personalWorkCategories_warningBody>The list of available works has changed. The mod automatically switched to the default preset. Go to the settings for passing the recovery procedure.</personalWorkCategories_warningBody>
+	<personalWorkCategories_warningBody>The list of available works has changed. Your preset has been automatically fixed. If necessary check it manually.</personalWorkCategories_warningBody>
 	
 	<personalWorkCategories_custom>Custom</personalWorkCategories_custom>
 	<personalWorkCategories_customGroup>Custom group</personalWorkCategories_customGroup>
@@ -46,6 +46,7 @@
 	
 	<personalWorkCategories_skills>Skills</personalWorkCategories_skills>
 
+	<personalWorkCategories_default>Default</personalWorkCategories_default>
 	<personalWorkCategories_defaultGroupLabel>work</personalWorkCategories_defaultGroupLabel>
 	<personalWorkCategories_defaultPawnLabel>Worker</personalWorkCategories_defaultPawnLabel>
 	<personalWorkCategories_defaultGerungLabel>working</personalWorkCategories_defaultGerungLabel>

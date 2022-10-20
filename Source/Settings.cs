@@ -75,7 +75,7 @@ namespace HandyUI_PersonalWorkCategories
         public override void ExposeData()
         {
             base.ExposeData();
-
+            
             if (Scribe.mode == LoadSaveMode.LoadingVars || Scribe.mode == LoadSaveMode.Saving)
             {
                 if (Scribe.mode == LoadSaveMode.Saving)
@@ -91,21 +91,6 @@ namespace HandyUI_PersonalWorkCategories
                     if (savedVersion != version)
                     {
                         return;
-                        /*
-                        switch (savedVersion)
-                        {
-                            case -1:
-                                string selectedPreset = null;
-                                Scribe_Values.Look<string>(ref selectedPreset, "SelectedPreset");
-                                if (selectedPreset != null)
-                                {
-                                    isSavedDataVersionDeprecated = true;
-                                    return;
-                                }
-                                break;
-                        }
-                        return;
-                        */
                     }
                 }
 
@@ -186,15 +171,6 @@ namespace HandyUI_PersonalWorkCategories
                         SwitchPresetTo(PM.DEFAULT_PRESET);
                 }
             }
-            /*
-            else
-            {
-                if (Widgets.CustomButtonText(ref deleteButRect, "personalWorkCategories_deletePreset".Translate(), Color.gray, Color.white, Color.black))
-                {
-                    SoundDefOf.ClickReject.PlayOneShotOnCamera();
-                }
-            }
-            */
 
             curY += 45f;
 
@@ -666,8 +642,8 @@ namespace HandyUI_PersonalWorkCategories
 
         internal bool InitModSettings(List<WorkTypeDef> defaultWorkTypes, List<WorkGiverDef> defaultWorkGivers)
         {
-            defaultWorkTypes.Sort((a, b) => a.naturalPriority >= b.naturalPriority ? -1 : 1);
-            defaultWorkGivers.Sort((a, b) => a.priorityInType >= b.priorityInType ? -1 : 1);
+            defaultWorkTypes.Sort((a, b) => a.naturalPriority > b.naturalPriority ? -1 : 1);
+            defaultWorkGivers.Sort((a, b) => a.priorityInType > b.priorityInType ? -1 : 1);
 
             string newHash;
 
@@ -683,8 +659,8 @@ namespace HandyUI_PersonalWorkCategories
                 newHash = PM.ComputePresetHash(defaultWorkTypes, defaultWorkGivers);
             }
 
-            bool selectedPresetDeprecate = false;
             bool defaultPresetDeprecate = false;
+            bool selectedCustomPresetDeprecate = false;
 
             if (PM.DEFAULT_PRESET.hash != newHash)
             {
@@ -696,20 +672,23 @@ namespace HandyUI_PersonalWorkCategories
             {
                 if (selectedPreset.hash != newHash)
                 {
-                    SwitchPresetTo(PM.DEFAULT_PRESET);
-                    selectedPresetDeprecate = true;
+                    selectedCustomPresetDeprecate = true;
+                    TryToFixSelectedPreset(false);
                 }
             }
 
-            if (defaultPresetDeprecate)
+            if (defaultPresetDeprecate || selectedCustomPresetDeprecate)
             {
-                if (selectedPresetDeprecate) isWorksListWasChanged = true;
-
                 Write();
-                return false;
+
+                if (selectedCustomPresetDeprecate)
+                {
+                    isWorksListWasChanged = true;
+                }
             }
 
-            return true;
+            if (selectedPreset != PM.DEFAULT_PRESET) return true;
+            else return false;
         }
 
         internal void SwitchPresetTo(Preset target)
@@ -736,14 +715,16 @@ namespace HandyUI_PersonalWorkCategories
             SetSelectedWorkType(null);
         }
 
-        private void TryToFixSelectedPreset()
+        private void TryToFixSelectedPreset(bool withCopying = true)
         {
-            Preset newPreset = PM.CopyPreset(selectedPreset, "personalWorkCategories_fixed".Translate() + " ");
-            newPreset.hash = PM.DEFAULT_PRESET.hash;
-            SwitchPresetTo(newPreset);
+            if (withCopying)
+            {
+                Preset newPreset = PM.CopyPreset(selectedPreset, "personalWorkCategories_fixed".Translate() + " ");
+                SwitchPresetTo(newPreset);
+            }
 
             //Delete deprecated work types and givers
-            foreach (WorkType workType in newPreset.workTypes.ListFullCopy())
+            foreach (WorkType workType in selectedPreset.workTypes.ListFullCopy())
             {
                 //check is work type deprecate
                 bool isWTDeprecate = true;
@@ -765,7 +746,7 @@ namespace HandyUI_PersonalWorkCategories
                     }
                 }
 
-                if (isWTDeprecate) newPreset.workTypes.Remove(workType);
+                if (isWTDeprecate) selectedPreset.workTypes.Remove(workType);
                 else
                 {
                     // check givers of current type for deprecated
@@ -779,10 +760,11 @@ namespace HandyUI_PersonalWorkCategories
                 }
             }
 
-            //Add new works
+            //Add new work types
+
             foreach (WorkType defaultWorkType in PM.DEFAULT_PRESET.workTypes)
             {
-                WorkType newPresetWorkType = newPreset.FindWorkTypeByDefName(defaultWorkType.defName);
+                WorkType newPresetWorkType = selectedPreset.FindWorkTypeByDefName(defaultWorkType.defName);
 
                 if (newPresetWorkType != null)
                 {
@@ -790,7 +772,7 @@ namespace HandyUI_PersonalWorkCategories
                     {
                         WorkGiver detectedWorkType = null;
 
-                        foreach (WorkType checkedWorkType in newPreset.workTypes)
+                        foreach (WorkType checkedWorkType in selectedPreset.workTypes)
                         {
                             detectedWorkType = checkedWorkType.workGivers.Find(wg => wg.defName == defaultWorkGiver.defName);
 
@@ -799,15 +781,17 @@ namespace HandyUI_PersonalWorkCategories
 
                         if (detectedWorkType != null) continue;
 
-                        WorkType workTypeForInserting = newPreset.FindWorkTypeByDefName(defaultWorkType.defName);
+                        WorkType workTypeForInserting = selectedPreset.FindWorkTypeByDefName(defaultWorkType.defName);
                         workTypeForInserting.InsertWorkGiverByPriority(defaultWorkGiver);
                     }
                 }
                 else
                 {
-                    newPreset.InsertWorkTypeByPriority(defaultWorkType);
+                    selectedPreset.InsertWorkTypeByPriority(defaultWorkType);
                 }
             }
+
+            selectedPreset.hash = PM.DEFAULT_PRESET.hash;
         }
 
         public void SetSelectedWorkType(WorkType workTypeToSelect)

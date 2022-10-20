@@ -25,7 +25,7 @@
 	<personalWorkCategories_root>Основа</personalWorkCategories_root>
 
 	<personalWorkCategories_warningHeader>Сообщение от мода Personal Work Categories</personalWorkCategories_warningHeader>
-	<personalWorkCategories_warningBody>Список доступных работ был изменён. Мод автоматически переключён на стандартный набор. Зайдите в настройки мода для прохождения процедуры восстановления.</personalWorkCategories_warningBody>
+	<personalWorkCategories_warningBody>Список доступных работ изменился. Мод автоматически внёс исправления. При необходимости проверьте эти изменения вручную.</personalWorkCategories_warningBody>
 	
 	<personalWorkCategories_custom>Разное</personalWorkCategories_custom>
 	<personalWorkCategories_customGroup>Пользовательская</personalWorkCategories_customGroup>
@@ -46,6 +46,7 @@
 	
 	<personalWorkCategories_skills>Скилы</personalWorkCategories_skills>
 
+	<personalWorkCategories_default>Базовый</personalWorkCategories_default>
 	<personalWorkCategories_defaultGroupLabel>разное</personalWorkCategories_defaultGroupLabel>
 	<personalWorkCategories_defaultPawnLabel>Разнорабочий</personalWorkCategories_defaultPawnLabel>
 	<personalWorkCategories_defaultGerungLabel>Работать</personalWorkCategories_defaultGerungLabel>
