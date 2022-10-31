@@ -26,6 +26,7 @@
 
 	<personalWorkCategories_warningHeader>Сообщение от мода Personal Work Categories</personalWorkCategories_warningHeader>
 	<personalWorkCategories_warningBody>Список доступных работ изменился. Мод автоматически внёс исправления. При необходимости проверьте эти изменения вручную.</personalWorkCategories_warningBody>
+	<personalWorkCategories_newVersionWarningMessage>Мод обновился до новой версии несовместимой со старыми настройками. Все пользовательские настройки сброшены. Автор мода приносит свои извинения за неудобства.</personalWorkCategories_newVersionWarningMessage>
 	
 	<personalWorkCategories_custom>Разное</personalWorkCategories_custom>
 	<personalWorkCategories_customGroup>Пользовательская</personalWorkCategories_customGroup>

@@ -17,9 +17,9 @@ namespace HandyUI_PersonalWorkCategories.Patch
         {            
             try
             {
-                bool IsChangesNeeded = PersonalWorkCategories.Settings.InitModSettings(
-                    DefDatabase<WorkTypeDef>.AllDefsListForReading,
-                    DefDatabase<WorkGiverDef>.AllDefsListForReading);
+                bool IsChangesNeeded = PersonalWorkCategories.Settings.Initialize(
+                    DefDatabase<WorkTypeDef>.AllDefsListForReading.ListFullCopy(),
+                    DefDatabase<WorkGiverDef>.AllDefsListForReading.ListFullCopy());
 
                 if (IsChangesNeeded)
                 {
@@ -36,24 +36,25 @@ namespace HandyUI_PersonalWorkCategories.Patch
 
         private static void ChangeWorkTypes()
         {
-            List<WorkTypeDef> inGameWorkTypes = DefDatabase<WorkTypeDef>.AllDefsListForReading.ListFullCopy();
-            DefDatabase<WorkTypeDef>.Clear();
-            List<WorkTypeDef> moddedWorkTypes = new List<WorkTypeDef>();
+            List<WorkTypeDef> defaultWorkTypes = DefDatabase<WorkTypeDef>.AllDefsListForReading.ListFullCopy();
 
             PersonalWorkCategoriesSettings mod = PersonalWorkCategories.Settings;
 
-            List<WorkType> allWorkTypes = mod.selectedPreset.workTypes;
-            WorkTypeDef workTypeDef;
-            int i = 0;
-            foreach (WorkType workType in allWorkTypes)
+            List<WorkType> customWorkTypes = mod.selectedPreset.workTypes;
+
+            for (int i = 0; i < customWorkTypes.Count; i++)
             {
-                if (workType.IsExtra())
+                WorkType customWorkType = customWorkTypes[i];
+
+                WorkTypeDef workTypeDef;
+
+                if (customWorkType.IsExtra())
                 {
-                    WorkType.ExtraData extraData = workType.extraData;
+                    WorkType.ExtraData extraData = customWorkType.extraData;
 
                     workTypeDef = new WorkTypeDef();
 
-                    workTypeDef.defName = workType.defName;
+                    workTypeDef.defName = customWorkType.defName;
                     workTypeDef.labelShort = extraData.labelShort;
                     workTypeDef.pawnLabel = string.IsNullOrEmpty(extraData.pawnLabel) ? "personalWorkCategories_defaultPawnLabel".Translate().RawText : extraData.pawnLabel;
                     workTypeDef.gerundLabel = string.IsNullOrEmpty(extraData.gerundLabel) ? "personalWorkCategories_defaultGerungLabel".Translate().RawText : extraData.gerundLabel;
@@ -61,12 +62,12 @@ namespace HandyUI_PersonalWorkCategories.Patch
                     workTypeDef.verb = string.IsNullOrEmpty(extraData.verb) ? "personalWorkCategories_defaultVerb".Translate().RawText : extraData.verb;
                     workTypeDef.relevantSkills = extraData.skills.ConvertAll(s => DefDatabase<SkillDef>.GetNamed(s));
 
-                    if (workType.IsRooted())
+                    if (customWorkType.IsRooted())
                     {
-                        WorkTypeDef rootDef = inGameWorkTypes.Find(wt => wt.defName == workType.extraData.root);
+                        WorkTypeDef rootDef = defaultWorkTypes.Find(wt => wt.defName == customWorkType.extraData.root);
                         if (rootDef == null)
                         {
-                            Log.Message("Can't find work type " + workType.defName);
+                            Log.Message("Can't find work type " + customWorkType.defName);
                             continue;
                         }
 
@@ -78,26 +79,23 @@ namespace HandyUI_PersonalWorkCategories.Patch
                         workTypeDef.disabledForSlaves = rootDef.disabledForSlaves;
                         workTypeDef.requireCapableColonist = rootDef.requireCapableColonist;
                     }
+
+                    DefDatabase<WorkTypeDef>.Add(workTypeDef);
                 }
                 else
                 {
-                    workTypeDef = inGameWorkTypes.Find(wt => wt.defName == workType.defName);
+                    workTypeDef = defaultWorkTypes.Find(wt => wt.defName == customWorkType.defName);
                     if (workTypeDef == null)
                     {
-                        Log.Message("Can't find work type " + workType.defName);
+                        Log.Message("Can't find work type " + customWorkType.defName);
                         continue;
                     }
                 }
 
-                workTypeDef.naturalPriority = (allWorkTypes.Count - i) * 50;
-                if (workType.workGivers.Count <= 0) workTypeDef.visible = false;
-
-                moddedWorkTypes.Add(workTypeDef);
-
-                i++;
+                workTypeDef.naturalPriority = (customWorkTypes.Count - i) * 50;
+                if (customWorkType.workGivers.Count <= 0) workTypeDef.visible = false;
             }
 
-            DefDatabase<WorkTypeDef>.Add(moddedWorkTypes);
         }
 
         private static void ChangeWorkGivers()
@@ -112,6 +110,7 @@ namespace HandyUI_PersonalWorkCategories.Patch
                 foreach (WorkGiver workGiver in workType.workGivers)
                 {
                     WorkGiverDef workGiverDef = DefDatabase<WorkGiverDef>.GetNamed(workGiver.defName);
+
                     if (workGiverDef == null)
                     {
                         workType.workGivers.Remove(workGiver);

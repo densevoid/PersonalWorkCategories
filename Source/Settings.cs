@@ -50,7 +50,7 @@ namespace HandyUI_PersonalWorkCategories
         public Preset selectedPreset;
         private string editablePresetName;
 
-        private PresetManager PM;
+        public PresetManager PM;
 
         private Type currentMouseOverColumnType;
         internal WorkType selectedWorkType;
@@ -90,6 +90,7 @@ namespace HandyUI_PersonalWorkCategories
                     Scribe_Values.Look<int>(ref savedVersion, "Version", -1);
                     if (savedVersion != version)
                     {
+                        isSavedDataVersionDeprecated = true;
                         return;
                     }
                 }
@@ -613,6 +614,11 @@ namespace HandyUI_PersonalWorkCategories
             {
                 selectedPreset.MoveWorkTypeToPosition(source, targetWorkType);
             }
+            else if (currentMouseOverColumnType == typeof(WorkType))
+            {
+                selectedPreset.workTypes.Remove(source);
+                selectedPreset.workTypes.Add(source);
+            }
         }
 
         private void MoveWorkGiver(WorkGiver sourceWorkGiver, WorkCommon target)
@@ -640,29 +646,29 @@ namespace HandyUI_PersonalWorkCategories
             }
         }
 
-        internal bool InitModSettings(List<WorkTypeDef> defaultWorkTypes, List<WorkGiverDef> defaultWorkGivers)
+        internal bool Initialize(List<WorkTypeDef> defaultWorkTypes, List<WorkGiverDef> defaultWorkGivers)
         {
             defaultWorkTypes.Sort((a, b) => a.naturalPriority > b.naturalPriority ? -1 : 1);
             defaultWorkGivers.Sort((a, b) => a.priorityInType > b.priorityInType ? -1 : 1);
 
-            string newHash;
+            string defaultHash;
 
             if (PM == null)
             {
                 PM = new PresetManager(defaultWorkTypes, defaultWorkGivers);
                 setSelectedPreset(PM.DEFAULT_PRESET);
 
-                newHash = PM.DEFAULT_PRESET.hash;
+                defaultHash = PM.DEFAULT_PRESET.hash;
             }
             else
             {
-                newHash = PM.ComputePresetHash(defaultWorkTypes, defaultWorkGivers);
+                defaultHash = PM.ComputePresetHash(defaultWorkTypes, defaultWorkGivers);
             }
 
             bool defaultPresetDeprecate = false;
             bool selectedCustomPresetDeprecate = false;
 
-            if (PM.DEFAULT_PRESET.hash != newHash)
+            if (PM.DEFAULT_PRESET.hash != defaultHash)
             {
                 defaultPresetDeprecate = true;
                 PM.UpdateDefaultPreset(defaultWorkTypes, defaultWorkGivers);
@@ -670,7 +676,7 @@ namespace HandyUI_PersonalWorkCategories
 
             if (selectedPreset != PM.DEFAULT_PRESET)
             {
-                if (selectedPreset.hash != newHash)
+                if (selectedPreset.hash != defaultHash)
                 {
                     selectedCustomPresetDeprecate = true;
                     TryToFixSelectedPreset(false);
@@ -687,8 +693,8 @@ namespace HandyUI_PersonalWorkCategories
                 }
             }
 
-            if (selectedPreset != PM.DEFAULT_PRESET) return true;
-            else return false;
+            //is changes needed
+            return selectedPreset != PM.DEFAULT_PRESET;
         }
 
         internal void SwitchPresetTo(Preset target)

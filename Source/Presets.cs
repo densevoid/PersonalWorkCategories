@@ -6,7 +6,7 @@ using Verse;
 
 namespace HandyUI_PersonalWorkCategories
 {
-    class PresetManager : IExposable
+    public class PresetManager : IExposable
     {
         public Preset DEFAULT_PRESET;
         private List<Preset> userPresets = new List<Preset>();
@@ -38,8 +38,13 @@ namespace HandyUI_PersonalWorkCategories
 
             foreach (WorkGiverDef wgDef in defaultWorkGivers)
             {
+                WorkType workType = DEFAULT_PRESET.workTypes.Find(wt =>
+                {
+                    if (wgDef.workType == null || wgDef.workType.defName == null) return false;
+                    return wt.defName == wgDef.workType.defName;
+                });
+
                 WorkGiver workGiver = new WorkGiver(wgDef);
-                WorkType workType = DEFAULT_PRESET.workTypes.Find(wt => wt.defName == wgDef.workType.defName);
 
                 if (workType != null) workType.workGivers.Add(workGiver);
             }
@@ -211,11 +216,14 @@ namespace HandyUI_PersonalWorkCategories
 
         public bool MoveWorkTypeToPosition(WorkType targetWorkType, WorkType positionWorkType)
         {
-            if (!workTypes.Contains(targetWorkType) || !workTypes.Contains(positionWorkType)) return false;
+            if (!workTypes.Contains(targetWorkType)) return false;
 
-            workTypes.Remove(targetWorkType);
-            int index = workTypes.IndexOf(positionWorkType) ;
-            workTypes.Insert(index, targetWorkType);
+            if (workTypes.Contains(positionWorkType))
+            {
+                workTypes.Remove(targetWorkType);
+                int index = workTypes.IndexOf(positionWorkType);
+                workTypes.Insert(index, targetWorkType);
+            }
 
             return true;
         }

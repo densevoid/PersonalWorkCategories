@@ -26,6 +26,7 @@
 
 	<personalWorkCategories_warningHeader>From mod: Personal Work Categories</personalWorkCategories_warningHeader>
 	<personalWorkCategories_warningBody>The list of available works has changed. Your preset has been automatically fixed. If necessary check it manually.</personalWorkCategories_warningBody>
+	<personalWorkCategories_newVersionWarningMessage>The mod was updated to the new version incompatible with old settings. All user settings are reset. The author of the mod apologizes for inconvenience.</personalWorkCategories_newVersionWarningMessage>
 	
 	<personalWorkCategories_custom>Custom</personalWorkCategories_custom>
 	<personalWorkCategories_customGroup>Custom group</personalWorkCategories_customGroup>
