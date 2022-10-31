@@ -21,7 +21,7 @@
 	<personalWorkCategories_presetDoesNotMatch>Текущий набор не соответствует версии игры</personalWorkCategories_presetDoesNotMatch>
 	<personalWorkCategories_tryToFix>Исправить</personalWorkCategories_tryToFix>
 	<personalWorkCategories_fixed>Новый</personalWorkCategories_fixed>  
-	<personalWorkCategories_cantChangeDefault>Стандартный набор не может быть изменён</personalWorkCategories_cantChangeDefault>
+	<personalWorkCategories_cantChangeDefault>Стандартный набор не может быть изменён. Скопируйте его для начала работы.</personalWorkCategories_cantChangeDefault>
 	<personalWorkCategories_root>Основа</personalWorkCategories_root>
 
 	<personalWorkCategories_warningHeader>Сообщение от мода Personal Work Categories</personalWorkCategories_warningHeader>

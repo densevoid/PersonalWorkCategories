@@ -332,17 +332,6 @@ namespace HandyUI_PersonalWorkCategories
                         curY += Button_EnableAdvancedMode(buttonRect);
                     }
 
-                    if (true)
-                    {
-                        if (Widgets.ButtonText(
-                            new Rect(0, inRect.yMax - standartButtonHeight, centerX - HALFS_GAP, standartButtonHeight),
-                            "personalWorkCategories_rebootGame".Translate()))
-                        {
-                            Write();
-                            GenCommandLine.Restart();
-                        }
-                    }
-
                     // right window part
                     curY = 45f;
                     Text.Font = GameFont.Tiny;
@@ -413,6 +402,14 @@ namespace HandyUI_PersonalWorkCategories
                 Text.Anchor = TextAnchor.UpperLeft;
                 Text.Font = GameFont.Small;
                 GUI.color = Color.white;
+            }
+
+            if (Widgets.ButtonText(
+                new Rect(0, inRect.yMax - standartButtonHeight, centerX - HALFS_GAP, standartButtonHeight),
+                "personalWorkCategories_rebootGame".Translate()))
+            {
+                Write();
+                GenCommandLine.Restart();
             }
         }
 

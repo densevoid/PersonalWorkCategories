@@ -21,7 +21,7 @@
 	<personalWorkCategories_presetDoesNotMatch>This preset does not match the current version of the game</personalWorkCategories_presetDoesNotMatch>
 	<personalWorkCategories_tryToFix>Try to fix</personalWorkCategories_tryToFix>
 	<personalWorkCategories_fixed>Fixed</personalWorkCategories_fixed>  
-	<personalWorkCategories_cantChangeDefault>The default preset cannot be changed</personalWorkCategories_cantChangeDefault>
+	<personalWorkCategories_cantChangeDefault>The default preset cannot be changed. Copy it to get started.</personalWorkCategories_cantChangeDefault>
 	<personalWorkCategories_root>Root</personalWorkCategories_root>
 
 	<personalWorkCategories_warningHeader>From mod: Personal Work Categories</personalWorkCategories_warningHeader>
