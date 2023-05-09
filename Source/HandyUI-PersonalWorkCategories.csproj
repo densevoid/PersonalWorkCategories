@@ -68,6 +68,7 @@
     <Compile Include="FloatingElement.cs" />
     <Compile Include="Patch\DefGenerator__patch.cs" />
     <Compile Include="Patch\MainMenuDrawer__patch.cs" />
+    <Compile Include="Patch\Pawn_WorkSettings__patch.cs" />
     <Compile Include="Presets.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Utils\CommonUtils.cs" />

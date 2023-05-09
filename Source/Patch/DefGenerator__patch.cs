@@ -25,6 +25,7 @@ namespace HandyUI_PersonalWorkCategories.Patch
                 {
                     ChangeWorkTypes();
                     ChangeWorkGivers();
+                    ChangeMechEnabledWorkTypes();
                 }
             }
             catch(Exception e)
@@ -123,6 +124,36 @@ namespace HandyUI_PersonalWorkCategories.Patch
                     i++;
                 }
             }
+        }
+
+        private static void ChangeMechEnabledWorkTypes()
+        {
+            List<WorkTypeDef> defaultWorkTypes = DefDatabase<WorkTypeDef>.AllDefsListForReading.ListFullCopy();
+
+            PersonalWorkCategoriesSettings mod = PersonalWorkCategories.Settings;
+
+            List<WorkType> customWorkTypes = mod.selectedPreset.workTypes;
+
+            foreach (ThingDef def in DefDatabase<ThingDef>.AllDefs)
+            {
+                if (def.race == null) continue;
+
+                //find race with mechanoids work types
+                foreach (WorkTypeDef workTypeDef in def.race.mechEnabledWorkTypes.ListFullCopy())
+                {
+                    //go throught custom work types and add child works to this race
+                    foreach (WorkType customWorkType in customWorkTypes)
+                    {
+                        if (customWorkType.IsRooted())
+                        {
+                            if (workTypeDef.defName == customWorkType.extraData.root)
+                            {
+                                def.race.mechEnabledWorkTypes.Add(defaultWorkTypes.Find(wt => wt.defName == customWorkType.defName));
+                            }
+                        }
+                    }
+                }
+            };
         }
     }
 }

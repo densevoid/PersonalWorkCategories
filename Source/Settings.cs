@@ -320,6 +320,8 @@ namespace HandyUI_PersonalWorkCategories
 
                     curY = inRect.yMax - (standartButtonHeight * 3 + 15f);
 
+                    // Disable advanced mode because it don't work with biotech mechanoids
+                    /*
                     if (selectedPreset.isAdvanced)
                     {
                         Rect buttonRect = new Rect(0, inRect.yMax - standartButtonHeight * 2 - 5f, centerX - HALFS_GAP, standartButtonHeight);
@@ -331,6 +333,7 @@ namespace HandyUI_PersonalWorkCategories
                         Rect buttonRect = new Rect(0, curY, centerX - HALFS_GAP, standartButtonHeight);
                         curY += Button_EnableAdvancedMode(buttonRect);
                     }
+                    */
 
                     // right window part
                     curY = 45f;
