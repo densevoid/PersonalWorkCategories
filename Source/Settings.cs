@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
@@ -71,6 +72,8 @@ namespace HandyUI_PersonalWorkCategories
 
         const float elementHeight = 50f;
         const float elementGap = 4f;
+
+        public static Regex ValidNameRegex = new Regex("^[\\p{L}0-9 '\\-.]*$");
 
         public override void ExposeData()
         {
@@ -182,7 +185,7 @@ namespace HandyUI_PersonalWorkCategories
             if (!isDefaultPreset)
             {
                 if (editablePresetName == null) editablePresetName = selectedPreset.name;
-                editablePresetName = Widgets.TextField(presetNameRect, editablePresetName, 30, Outfit.ValidNameRegex);
+                editablePresetName = Widgets.TextField(presetNameRect, editablePresetName, 30, ValidNameRegex);
             }
             else
                 Widgets.Label(new Rect(presetNameRect) { x = presetNameRect.x + 3f, y = presetNameRect.y + 5f, height = presetNameRect.height - 5f }, selectedPreset.name);
